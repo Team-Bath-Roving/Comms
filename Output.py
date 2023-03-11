@@ -25,6 +25,7 @@ class Output:
 	def assignTCP(self,comms):
 		self.comms=comms
 	def write(self,prefix:str,msg:str,tcp=False):
+		msg=str(msg)
 		# Send over TCP if that is enabled for this message
 		if tcp:
 			try:
