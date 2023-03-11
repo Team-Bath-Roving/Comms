@@ -3,8 +3,6 @@
 from colorama import Fore
 from enum import Enum
 
-
-
 class typeSettings:
 	def __init__(self,colour,show):
 		self.colour=colour
@@ -31,9 +29,13 @@ class Output:
 		self.comms=comms
 	def write(self,prefix:str,msg:str,tcp=False):
 		# Only print if enabled for that msg type
-		if prefix in self.msg_types:
-			if self.msg_types[prefix].show==True:
-				print(self.colorise(f"{prefix.ljust(6)}: {msg}"))
+		display=True
+		for type,settings in self.msg_types:
+			if type in prefix:
+				if not settings.show:
+					display=False
+		if display:
+			print(self.colorise(f"{prefix.ljust(6)}: {msg}"))
 		# Send over TCP if that is enabled for this message
 		if tcp:
 			try:
