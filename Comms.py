@@ -107,12 +107,12 @@ class CommsClient(Comms):
 		self.client_sock=jsock.ClientSocket(self.key)
 	def conn(self,port):
 		self.client_sock._socket.settimeout(1)
-		self.output.write("INFO",f"Connecting to TCP server at {self.host_IP}:{port}",False)
+		self.output.write("STATUS",f"Connecting to TCP server at {self.host_IP}:{port}",False)
 		try:
 			self.client_sock.connect(self.host_IP,port)
 			return True
 		except Exception as e:
-			self.output.write("EXCEPT",e)
+			# self.output.write("EXCEPT",e)
 			return False
 	def connect(self):
 		while not self.connected:
