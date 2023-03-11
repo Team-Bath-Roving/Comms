@@ -1,6 +1,6 @@
 from socket import SHUT_RDWR
 import jsock
-from Output import Output
+from tbroLib.Output import Output
 import time
 import threading
 
@@ -21,6 +21,7 @@ class Comms:
 		self.key=key
 		output.assignTCP(self)
 		self.watchdog_thread=threading.Thread(target=self.watchdog,args=(watchdog_time,),daemon=True)
+		self.watchdog_thread.start()
 	def watchdog(self,ping_delay):
 		while(True):
 			time.sleep(ping_delay)
