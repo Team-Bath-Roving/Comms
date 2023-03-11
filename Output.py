@@ -1,7 +1,4 @@
-# from classes.Comms import Comms
-
 from colorama import Fore
-from enum import Enum
 
 class typeSettings:
 	def __init__(self,colour,show):
@@ -28,30 +25,36 @@ class Output:
 	def assignTCP(self,comms):
 		self.comms=comms
 	def write(self,prefix:str,msg:str,tcp=False):
-		# Only print if enabled for that msg type
-		display=True
-		for type,settings in self.msg_types:
-			if type in prefix:
-				if not settings.show:
-					display=False
-		if display:
-			print(self.colorise(f"{prefix.ljust(6)}: {msg}"))
 		# Send over TCP if that is enabled for this message
 		if tcp:
 			try:
 				self.comms.send({prefix:msg}) # formatted as a JSON key:val pair
 			except:
 				pass
+		# Only print if enabled for that msg type
+		display=True
+		for type,settings in self.msg_types.items():
+			if type in prefix or type in msg:
+				if not settings.show:
+					display=False
+		if display:
+			if prefix=="TCP":
+				prefix=self.tcp_name
+			print(self.colorise(f"{prefix.ljust(6)}: {msg}"))
+		
 
-	def toggleDisplayType(self,type,enabled):
-		if type in self.msgTypes:
-			self.msgTypes[type].show=enabled
-		else:
-			self.write("ERROR",f"Message type {type} not found")
+	def toggleDisplayTypes(self,types,enabled):
+		for type in types:
+			if type in self.msg_types:
+				self.msg_types[type].show=enabled
+			else:
+				self.write("ERROR",f"Message type {type} not found")
 
 	def colorise(self,msg:str):
-		for type,settings in self.msg_settingss.items():
-			if "TCP" in settings:
-				settings=self.tcp_name
-			msg=msg.replace(type,settings.colour+type+Fore.WHITE)
+		for type,settings in self.msg_types.items():
+			if type=="TCP":
+				prefix=self.tcp_name
+			else:
+				prefix=type
+			msg=msg.replace(prefix,settings.colour+prefix+Fore.WHITE)
 		return msg
