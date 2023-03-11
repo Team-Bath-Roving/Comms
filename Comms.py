@@ -107,7 +107,7 @@ class CommsClient(Comms):
 		self.client_sock=jsock.ClientSocket(self.key)
 	def conn(self,port):
 		self.client_sock._socket.settimeout(1)
-		self.output.write("STATUS",f"Connecting to TCP server at {self.host_IP}:{port}",False)
+		self.output.write("STATUS",f"Trying connection on TCP port:{port}",False)
 		try:
 			self.client_sock.connect(self.host_IP,port)
 			return True
@@ -115,13 +115,16 @@ class CommsClient(Comms):
 			# self.output.write("EXCEPT",e)
 			return False
 	def connect(self):
+		self.output.write("INFO",f"Connecting to TCP server at {self.host_IP}",False)
 		while not self.connected:
 			for port in self.host_ports:
 				self.create_socket()
 				if self.conn(port):
 					self.host_port=port
 					self.connected=self.client_sock.poll()
-					break
+					self.send({"PING":None})
+					if self.connected:
+						break
 		self.output.write("INFO",f"Connected to TCP server at {self.host_IP}:{self.host_port} from {self.client_sock.local_address}",False)
 	def close(self):
 		self.output.write("INFO","Closing sockets",True)
