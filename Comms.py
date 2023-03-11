@@ -1,30 +1,39 @@
-from socket import socket, AF_INET, SOCK_DGRAM, SOCK_STREAM, SOL_SOCKET, SO_REUSEADDR, SHUT_RDWR
+from socket import SHUT_RDWR
 import jsock
 from Output import Output
+import time
+import threading
 
-SIZE = 1024
 # TCP json communications module
+# Uses async TCP commands to reduce number of python threads
+# Spawns a watchdog thread to auto reconnect
+
+
 class Comms:
 	msg_in=[] # store json messages received
 	connected=False
 	client_sock=None
 	host_port=None
-	def __init__(self,host_IP:str,host_ports:int,output:Output,key):
+	def __init__(self,host_IP:str,host_ports:int,output:Output,key,watchdog_time):
 		self.output=output
 		self.host_IP=host_IP
 		self.host_ports=host_ports
 		self.key=key
-		# self.create_socket()
+		output.assignTCP(self)
+		self.watchdog_thread=threading.Thread(target=self.watchdog,args=(watchdog_time,),daemon=True)
+	def watchdog(self,ping_delay):
+		while(True):
+			time.sleep(ping_delay)
+			self.send({"PING":None})
+			if not self.connected:
+				self.connect()
 	def receive(self):
 		if self.connected:
-			# socket_list=[sys.stdin,self.client_sock._socket]
-			# read_sockets, write_sockets, error_sockets = select.select(socket_list, [], [])
-			# for sock in read_sockets:
-			# 	if sock==self.client_sock._socket:
 			try:
 				data=self.client_sock.receive()
 				if not data is None:
 					self.msg_in.insert(0,data)
+					return self.available()
 			except:
 				pass
 	def available(self):
@@ -60,7 +69,6 @@ class CommsServer(Comms):
 	def connect(self):
 		try:
 			self.create_socket()
-			# self.server_sock._socket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
 			for port in self.host_ports:
 				if self.bind(port):
 					self.host_port=port
@@ -70,7 +78,6 @@ class CommsServer(Comms):
 				self.connected=(not self.client_sock is None) and self.client_sock.poll()
 				if self.connected:
 					self.output.write("INFO",f"TCP client connected from {self.client_sock.remote_address} via port {self.host_port}",False)
-			# print(self.client_sock.poll())
 		except Exception as e:
 			self.output.write("EXCEPT",e,False)
 			self.connected=False
@@ -107,7 +114,6 @@ class CommsClient(Comms):
 			return False
 	def connect(self):
 		while not self.connected:
-			# print("create sock")
 			for port in self.host_ports:
 				self.create_socket()
 				if self.conn(port):
