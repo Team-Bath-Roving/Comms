@@ -35,9 +35,9 @@ class Comms:
 				data=self.client_sock.receive()
 				if not data is None:
 					self.msg_in.insert(0,data)
-					return self.available()
 			except:
 				pass
+		return self.available()
 	def available(self):
 		return len(self.msg_in)
 	def read(self):
