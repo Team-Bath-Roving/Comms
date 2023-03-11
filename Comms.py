@@ -27,6 +27,7 @@ class Comms:
 			time.sleep(ping_delay)
 			self.send({"PING":None})
 			if not self.connected:
+				self.output.write("WARN",f"TCP connection to lost, reconnecting",False)
 				self.connect()
 	def receive(self):
 		if self.connected:
