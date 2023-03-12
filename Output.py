@@ -15,10 +15,11 @@ class Output:
 		"ERROR"  :typeSettings(Fore.RED,True),
 		"EXCEPT" :typeSettings(Fore.MAGENTA,True),
 		"MCU"    :typeSettings(Fore.BLUE,True),
-		"PING"	 :typeSettings(Fore.LIGHTBLACK_EX,True),
+		"PING"	 :typeSettings(Fore.LIGHTMAGENTA_EX,True),
 		"ACK"	 :typeSettings(Fore.LIGHTMAGENTA_EX,True),
-		"STATUS" :typeSettings(Fore.LIGHTGREEN_EX,True),
+		"STATUS" :typeSettings(Fore.LIGHTBLACK_EX,True),
 		"RC"	 :typeSettings(Fore.LIGHTBLUE_EX,True),
+		"STREAM" :typeSettings(Fore.LIGHTCYAN_EX,True),
 	}
 	def __init__(self,tcp_name):
 		self.tcp_name=tcp_name
