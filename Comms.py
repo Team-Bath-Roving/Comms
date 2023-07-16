@@ -1,6 +1,6 @@
 from socket import SHUT_RDWR
 import jsock
-from tbroLib.Output import Output
+from Comms.Output import Output
 import time
 import threading
 
