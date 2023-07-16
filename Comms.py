@@ -1,5 +1,5 @@
 from socket import SHUT_RDWR
-import jsock
+from Comms.jsock import *
 from Comms.Output import Output
 import time
 import threading
@@ -58,7 +58,7 @@ class Comms:
 class CommsServer(Comms):
 	server_sock=None
 	def create_socket(self):
-		self.server_sock=jsock.ServerSocket(self.key)
+		self.server_sock=ServerSocket(self.key)
 		self.client_sock=self.server_sock.accept()
 	def bind(self,port):
 		self.output.write("INFO",f"TCP server awaiting connections at {self.host_IP}:{port}",False)
@@ -104,7 +104,7 @@ class CommsServer(Comms):
 
 class CommsClient(Comms):
 	def create_socket(self):
-		self.client_sock=jsock.ClientSocket(self.key)
+		self.client_sock=ClientSocket(self.key)
 	def conn(self,port):
 		self.client_sock._socket.settimeout(1)
 		self.output.write("STATUS",f"Trying connection on TCP port:{port}",False)
