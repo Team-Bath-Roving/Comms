@@ -7,4 +7,4 @@ The [jsock](https://github.com/turicas/jsock) library is used to convert the dic
 ## Output
 This class provides a way for other modules to output to the console, optionally sending over TCP as well.  
 Messages are categorized, allowing the output to be filtered, e.g. to only show errors.  
-Messages can also have a hierarchy, allowing the source to be determined (e.g. `TCP: MCU: INFO: Initiaised` is an info message sent over TCP, sent over serial to the Pi from the microcontroller.)
+Messages can also have a hierarchy, allowing the source to be determined (e.g. `TCP: MCU: INFO: Initialised` is an info message sent from the microcontroller over serial to the Pi, which has been forwarded over TCP to Misson Control.
