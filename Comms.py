@@ -10,21 +10,34 @@ import threading
 
 
 class Comms:
-	msg_in=[] # store json messages received
-	connected=False
-	client_sock=None
-	host_port=None
+	# msg_in=[] # store json messages received
+	# running=False
+	# connected=False
+	# client_sock=None
+	# host_port=None
 	def __init__(self,host_IP:str,host_ports:int,output:Output,key,watchdog_time):
+		self.msg_in=[] # store json messages received
+		self.running=False
+		self.connected=False
+		self.client_sock=None
+		self.host_port=None		
+
+		self.watchdog_time=watchdog_time
 		self.output=output
 		self.host_IP=host_IP
 		self.host_ports=host_ports
 		self.key=key
 		output.assignTCP(self)
-		self.watchdog_thread=threading.Thread(target=self.watchdog,args=(watchdog_time,),daemon=True)
+	def start(self):
+		self.connect()
+		self.running=True
+		self.watchdog_thread=threading.Thread(target=self.watchdog,daemon=True)
 		self.watchdog_thread.start()
-	def watchdog(self,ping_delay):
-		while(True):
-			time.sleep(ping_delay)
+	def stop(self):
+		self.running=False
+	def watchdog(self):
+		while(self.running):
+			time.sleep(self.watchdog_time)
 			self.send({"PING":None})
 			if not self.connected:
 				self.output.write("WARN",f"TCP connection lost, reconnecting",False)
